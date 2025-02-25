@@ -1,0 +1,24 @@
+@keyframes ticker {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.ticker-wrapper {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.ticker-content {
+  display: flex;
+  gap: 2rem; /* Adjust spacing between items */
+  min-width: 200%;
+  animation: ticker 15s linear infinite;
+}
