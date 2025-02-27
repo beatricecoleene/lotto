@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Header from "../components/Headerout";
+import Header from "../components/headers/Headerout";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -74,7 +74,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={!email || !password}
-                onClick={() => window.location.href = '/main'}
+                onClick={() => (window.location.href = "/home")}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign in

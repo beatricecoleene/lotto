@@ -1,4 +1,4 @@
-import Header from "../components/Headerout";
+import Header from "../components/headers/Headerout";
 
 const Register = () => {
   return (
