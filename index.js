@@ -1,21 +1,17 @@
-// import dotenv from "dotenv";
-// import connectDB from "./LOTTO/backend/src/config/db.js";
-
-// dotenv.config();
-
-
-// (async () => {
-//     await connectDB();
-// })
-import express from "express"; // Use import instead of require
+import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import UserSocket from "./backend/src/sockets/userSocket.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Get the port from environment variables
-
-app.get("/", (req, res) => {
-  res.send(`Server running on port ${PORT}`);
+const server = createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server started on http://localhost:${PORT}`);
+// ✅ Initialize WebSocket logic properly
+new UserSocket(io);
+
+server.listen(3000, () => {
+  console.log("Server running on port 3000");
 });

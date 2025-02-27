@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io Frontend Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket.io Frontend Test</h1>
+    
+    <input type="text" id="username" placeholder="Enter username">
+    <input type="email" id="email" placeholder="Enter email">
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="registerUser()">Register</button>
+
+    <p id="status"></p>
+
+    <script>
+        // Connect to WebSocket server
+        const socket = io("http://localhost:3000");
+
+        socket.on("connect", () => {
+            console.log("Connected to WebSocket server:", socket.id);
+        });
+
+        socket.on("accountCreated", (data) => {
+            document.getElementById("status").innerText = data.message;
+        });
+
+        socket.on("creationError", (data) => {
+            document.getElementById("status").innerText = "Error: " + data.message;
+        });
+
+        function registerUser() {
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const userData = {
+                user_name: username,
+                email: email,
+                password: password,
+                birthdate: "2000-01-01",  // Test data
+                contact_num: "123456789"
+            };
+
+            socket.emit("registerUser", userData);
+        }
+    </script>
+</body>
+</html>
+

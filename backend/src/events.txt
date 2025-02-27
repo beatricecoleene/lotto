@@ -1,0 +1,6 @@
+UserSocket EVENTS
+
+1. connection
+2.registerUser- socket.on
+3.accountCreated- socket.emit
+4. creationError- socket.emit
