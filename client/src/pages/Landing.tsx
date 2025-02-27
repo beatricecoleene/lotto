@@ -1,14 +1,16 @@
-import Header from "../components/Header"
-import Welcome from "../components/Welcome"
+import Header from "../components/headers/Headerout";
+import Welcome from "../components/Welcome";
 
+// import WinningPrize from "../components/games/WinningPrize";
 
 const Landing = () => {
   return (
     <div>
-        <Header />
-        <Welcome />
+      <Header />
+      <Welcome />
+      {/* <WinningPrize /> */}
     </div>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;

@@ -1,4 +1,4 @@
-import casino from '../assets/images/casino.png'
+import casino from '../../assets/images/casino.png'
 
 const Header = () => {
   return (
