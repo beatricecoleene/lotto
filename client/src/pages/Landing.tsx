@@ -1,14 +1,13 @@
-import Header from "../components/Header"
-import Welcome from "../components/Welcome"
-
+import Header from "../components/Headerout";
+import Welcome from "../components/Welcome";
 
 const Landing = () => {
   return (
     <div>
-        <Header />
-        <Welcome />
+      <Header />
+      <Welcome />
     </div>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;
