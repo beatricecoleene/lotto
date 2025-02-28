@@ -6,7 +6,6 @@ import Welcome from "../components/Welcome";
 const Landing = () => {
   return (
     <div>
-      <Header />
       <Welcome />
       {/* <WinningPrize /> */}
     </div>

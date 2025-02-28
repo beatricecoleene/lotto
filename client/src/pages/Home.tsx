@@ -15,17 +15,16 @@ const Main = () => {
       <Header
         title="Home"
         balance={1000}
-        onDepositClick={handledepositClick}
         onProfileClick={handleProfileClick}
         activePage="home"
       />
 
-      <div className="flex flex-1 overflow-hidden">
-        <SideNav activePage="home" />
+      <div className="flex flex-1 overflow-hidden bg-gray-900">
+        {/* <SideNav activePage="home" /> */}
 
         <div className="flex-1 p-4 overflow-auto">
           <h2>HOME CONTENT</h2>
-          {/* Your home content goes here */}
+
         </div>
 
       </div>
