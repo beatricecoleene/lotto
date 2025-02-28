@@ -1,16 +1,16 @@
 import User from "../models/accountModel.js";
 import jwt from "jsonwebtoken";
 
-
+console.log("user socket")
 export class UserSocket{
     constructor(io){
         this.io = io;
         this.userModel = new User();
-        this.SocketEvents();
+        this.uSocketEvents();
 
     }
 
-    SocketEvents(){
+    uSocketEvents(){
         this.io.on("connection", (socket) => {
             console.log("User Connected", socket.id);
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Coins</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Claim Coins</h1>
+    
+    <button onclick="claimCoins()">Claim Coins</button>
+    <p id="status"></p>
+    <a href="index.html">Go back to Login/Register</a>
+
+    <script>
+        let prizeSocket;
+
+        function connectPrizeSocket() {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                document.getElementById("status").innerText = "❌ You need to log in first!";
+                return;
+            }
+
+            prizeSocket = io("http://localhost:3000/prize", { auth: { token } });
+
+            prizeSocket.on("connect", () => {
+                console.log("✅ Prize Socket Connected:", prizeSocket.id);
+            });
+
+            prizeSocket.on("coinsClaimed", (data) => {
+                document.getElementById("status").innerText = `✅ ${data.message} You now have ${data.coins} coins.`;
+            });
+
+            prizeSocket.on("claimingError", (error) => {
+                document.getElementById("status").innerText = `❌ ${error.message}`;
+            });
+
+            prizeSocket.on("disconnect", () => {
+                console.warn("⚠️ Prize Socket Disconnected");
+            });
+        }
+
+        
+        connectPrizeSocket();
+
+        function claimCoins() {
+            if (!prizeSocket) {
+                document.getElementById("status").innerText = "❌ Not connected to Prize Socket!";
+                return;
+            }
+
+            console.log("📩 Sending Claim Coins Request");
+            prizeSocket.emit("claimCoins");
+        }
+    </script>
+</body>
+</html>
