@@ -1,4 +1,5 @@
 import User from "../models/accountModel.js";
+import jwt from "jsonwebtoken";
 
 
 export class UserSocket{
@@ -37,7 +38,11 @@ export class UserSocket{
             const result=await this.userModel.createUser(user_name, email, password,birthdate, contact_num);
             console.log(result.user_id);
             console.log(result);
-            socket.emit("accountCreated", {message:"Account Created!", user_id: result});
+            socket.emit("accountCreated", {message:"Account Created!", user_id: result.id, 
+                user_name: user_name,
+                email: email,
+                birthdate: birthdate,
+                contact_num: contact_num});
 
         }catch(error){
             socket.emit("creationError", {message: error.message});
@@ -57,7 +62,8 @@ export class UserSocket{
                 process.env.API_SECRET_KEY,
                 { expiresIn: "7d"}
             );
-            socket.emit("LoggedIn", {message: "Logged In "});
+            console.log(token);
+            socket.emit("LoggedIn", {message: "Logged In ", token: token});
         }catch(error){
             socket.emit("logInError",{message: error.message});
             console.error(error);

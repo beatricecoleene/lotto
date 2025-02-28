@@ -39,10 +39,12 @@ export class User{
                 [email, verif_pw]
             );
             const acc = result[0];
+            console.log(acc)
 
-            if (!ac ){
+            if (!acc){
                 return null;
             }
+            return acc;
 
             
         }catch(err){

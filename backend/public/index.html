@@ -32,7 +32,7 @@
 
         // Handle successful account creation
         socket.on("accountCreated", (data) => {
-            document.getElementById("status").innerText = `✅ ${data.message} (User ID: ${data.user_id})`;
+            document.getElementById("status").innerText = `✅ ${data.message} (User ID: ${data.user_id},${data.user_name})`;
         });
 
         // Handle account creation error
@@ -42,7 +42,7 @@
 
         // Handle successful login
         socket.on("LoggedIn", (data) => {
-            document.getElementById("status").innerText = `✅ ${data.message}`;
+            document.getElementById("status").innerText = `✅ ${data.message} ${data.token}`;
         });
 
         // Handle login error
