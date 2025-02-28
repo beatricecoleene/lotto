@@ -1,20 +1,26 @@
 import { useState } from "react";
 import coin from "../../assets/images/coin.png";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   title: string;
   balance: number;
   onDepositClick: () => void;
   onProfileClick: () => void;
-  // activePage: 'home' | 'game' | 'history';
-  // onNavigate: (page: 'home' | 'game' | 'history') => void;
+  activePage: 'home' | 'game' | 'history';
 }
 
-const Header = ({title, balance, onDepositClick, onProfileClick}: HeaderProps) => {
+const Header = ({title, balance, onDepositClick, onProfileClick, activePage}: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleNavigation = (page: 'home' | 'game' | 'history') => {
+    navigate(`/${page}`);
+    setMenuOpen(false);
   };
 
   return (
@@ -69,10 +75,6 @@ const Header = ({title, balance, onDepositClick, onProfileClick}: HeaderProps) =
         ></div>
       </div>
 
-
-
-
-
       {menuOpen && (
         <div className="fixed top-0 left-0 w-64 h-full bg-purple-950 z-50 md:hidden shadow-lg">
           <div className="flex flex-col h-full">
@@ -115,16 +117,39 @@ const Header = ({title, balance, onDepositClick, onProfileClick}: HeaderProps) =
                   <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
                   <span className="ml-3 text-white">Profile</span>
                 </div>
-                <div className="py-2 text-white border-t border-purple-800">
-                  <div className="mt-4 py-2 hover:bg-purple-900 rounded px-2 cursor-pointer">
-                    Home
-                  </div>
-                  <div className="py-2 hover:bg-purple-900 rounded px-2 cursor-pointer">
-                    Game
-                  </div>
-                  <div className="py-2 hover:bg-purple-900 rounded px-2 cursor-pointer">
-                    History
-                  </div>
+                <div className="py-2 text-white border-t border-purple-800 flex flex-col gap-4 mt-4">
+                  <button
+                    onClick={() => handleNavigation("home")}
+                    className={`py-4 text-center font-bold border-2 bg-gray-900 ${
+                      activePage === "home"
+                        ? "bg-purple-900 text-cyan-400"
+                        : "text-cyan-400 hover:bg-purple-900"
+                    }`}
+                  >
+                    HOME
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigation("game")}
+                    className={`py-4 text-center font-bold border-2 bg-gray-900 ${
+                      activePage === "game"
+                        ? "bg-purple-900 text-fuchsia-500"
+                        : "text-fuchsia-500 hover:bg-purple-900"
+                    }`}
+                  >
+                    GAME
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigation("history")}
+                    className={`py-4 text-center font-bold border-2 bg-gray-900 ${
+                      activePage === "history"
+                        ? "bg-purple-900 text-red-500"
+                        : "text-red-500 hover:bg-purple-900"
+                    }`}
+                  >
+                    HISTORY
+                  </button>
                 </div>
               </nav>
             </div>

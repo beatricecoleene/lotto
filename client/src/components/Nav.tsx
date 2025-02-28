@@ -1,19 +1,18 @@
+import { useNavigate } from "react-router-dom";
+
 interface SideNavProps {
   activePage: "home" | "game" | "history";
-  // onNavigate: (page: "home" | "game" | "history") => void;
 }
-
-import { useNavigate } from "react-router-dom";
 
 const SideNav = ({ activePage }: SideNavProps) => {
   const navigate = useNavigate();
 
   return (
-    <nav>
-      <div className="border-r border-purple-900 flex flex-col gap-4 pt-50 bg-purple-950 w-1/6 h-screen hidden md:flex">
+    <nav className="border-r border-purple-900 bg-purple-950 h-screen w-64 hidden md:block">
+      <div className="flex flex-col gap-4 pt-8 mt-35">
         <button
           onClick={() => navigate("/home")}
-          className={`py-4 text-center font-bold border-2 ${
+          className={`py-4 text-center font-bold border-2 bg-gray-900 ${
             activePage === "home"
               ? "bg-purple-900 text-cyan-400"
               : "text-cyan-400 hover:bg-purple-900"
@@ -24,7 +23,7 @@ const SideNav = ({ activePage }: SideNavProps) => {
 
         <button
           onClick={() => navigate("/game")}
-          className={`py-4 text-center font-bold border-2 ${
+          className={`py-4 text-center font-bold border-2 bg-gray-900 ${
             activePage === "game"
               ? "bg-purple-900 text-fuchsia-500"
               : "text-fuchsia-500 hover:bg-purple-900"
@@ -35,7 +34,7 @@ const SideNav = ({ activePage }: SideNavProps) => {
 
         <button
           onClick={() => navigate("/history")}
-          className={`py-4 text-center font-bold border-2 ${
+          className={`py-4 text-center font-bold border-2 bg-gray-900 ${
             activePage === "history"
               ? "bg-purple-900 text-red-500"
               : "text-red-500 hover:bg-purple-900"
