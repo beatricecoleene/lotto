@@ -4,3 +4,11 @@ UserSocket EVENTS
 2.registerUser- socket.on
 3.accountCreated- socket.emit
 4. creationError- socket.emit
+
+
+
+
+
+
+MIDDLEWARRE/authentication.js
+1. failedAuthentication- socket.emit

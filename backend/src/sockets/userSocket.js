@@ -18,6 +18,11 @@ export class UserSocket{
                 
             });
 
+            socket.on("userLogIn", async(data) => {
+                await this.logIn(socket, data);
+
+            });
+
             socket.on("disconnect", () =>{
                 console.log("User disconnected", socket.id);
             });
@@ -29,13 +34,36 @@ export class UserSocket{
         const {user_name, email, password,birthdate, contact_num} = data;
 
         try{
-            await this.userModel.createUser(user_name, email, password,birthdate, contact_num);
-            socket.emit("accountCreated", {message:"Account Created!" });
+            const result=await this.userModel.createUser(user_name, email, password,birthdate, contact_num);
+            console.log(result.user_id);
+            console.log(result);
+            socket.emit("accountCreated", {message:"Account Created!", user_id: result});
 
         }catch(error){
             socket.emit("creationError", {message: error.message});
             console.error(User);
         }
+    }
+
+    async logIn(socket, data){
+        const{email, password} = data;
+
+        try{
+            const user = await this.userModel.log_In(email, password);
+           
+
+            const token = jwt.sign(
+                { user_id: user.id, email: user.email },
+                process.env.API_SECRET_KEY,
+                { expiresIn: "7d"}
+            );
+            socket.emit("LoggedIn", {message: "Logged In "});
+        }catch(error){
+            socket.emit("logInError",{message: error.message});
+            console.error(error);
+        }
+
+
     }
 
 }

@@ -9,10 +9,16 @@
 <body>
     <h1>Socket.io Frontend Test</h1>
     
+    <h2>Register</h2>
     <input type="text" id="username" placeholder="Enter username">
     <input type="email" id="email" placeholder="Enter email">
     <input type="password" id="password" placeholder="Enter password">
     <button onclick="registerUser()">Register</button>
+
+    <h2>Log In</h2>
+    <input type="email" id="loginEmail" placeholder="Enter email">
+    <input type="password" id="loginPassword" placeholder="Enter password">
+    <button onclick="logInUser()">Log In</button>
 
     <p id="status"></p>
 
@@ -24,14 +30,27 @@
             console.log("Connected to WebSocket server:", socket.id);
         });
 
+        // Handle successful account creation
         socket.on("accountCreated", (data) => {
-            document.getElementById("status").innerText = data.message;
+            document.getElementById("status").innerText = `✅ ${data.message} (User ID: ${data.user_id})`;
         });
 
+        // Handle account creation error
         socket.on("creationError", (data) => {
-            document.getElementById("status").innerText = "Error: " + data.message;
+            document.getElementById("status").innerText = "❌ Error: " + data.message;
         });
 
+        // Handle successful login
+        socket.on("LoggedIn", (data) => {
+            document.getElementById("status").innerText = `✅ ${data.message}`;
+        });
+
+        // Handle login error
+        socket.on("logInError", (data) => {
+            document.getElementById("status").innerText = "❌ Error: " + data.message;
+        });
+
+        // Register a new user
         function registerUser() {
             const username = document.getElementById("username").value;
             const email = document.getElementById("email").value;
@@ -47,7 +66,19 @@
 
             socket.emit("registerUser", userData);
         }
+
+        // Log in a user
+        function logInUser() {
+            const email = document.getElementById("loginEmail").value;
+            const password = document.getElementById("loginPassword").value;
+
+            const loginData = {
+                email: email,
+                password: password
+            };
+
+            socket.emit("userLogIn", loginData);
+        }
     </script>
 </body>
 </html>
-
