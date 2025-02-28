@@ -5,95 +5,113 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     console.log("Email:", email);
     console.log("Password:", password);
   };
 
   return (
-    <>
-      <Header />
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-10 w-auto"
-          />
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Login to your account
-          </h2>
+    <div className="min-h-screen bg-[#1E1633] text-white flex flex-col">
+      <header className="py-4 px-6 flex justify-between items-center border-b border-[#FF00FF]/30">
+        <div className="flex items-center" onClick={() => window.location.href = "/"}>
+          <svg className="w-8 h-8 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="#FF00FF" strokeWidth="2" />
+            <circle cx="8" cy="9" r="2" fill="#FF00FF" />
+            <circle cx="16" cy="9" r="2" fill="#FF00FF" />
+            <path d="M8 16L16 16" stroke="#FF00FF" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <h1 className="text-2xl font-bold text-[#FF00FF]">LOTTOMOTO</h1>
         </div>
+        <div className="flex items-center gap-4">
+          <a 
+            href="/login" 
+            className="text-[#FF99FF] hover:text-[#FF00FF] transition-colors px-4 py-2"
+          >
+            Login
+          </a>
+          <a 
+            href="/register" 
+            className="bg-[#FF00FF] hover:bg-[#FF33FF] text-white px-4 py-2 rounded-md shadow-[0_0_10px_rgba(255,0,255,0.5)] transition-all"
+          >
+            Register
+          </a>
+        </div>
+      </header>
+      
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md">
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form onSubmit={handleSubmit} method="POST" className="space-y-6">
+          
+          {/* Title with glowing effect */}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold tracking-wider text-[#FF00FF] drop-shadow-[0_0_8px_rgba(255,0,255,0.7)]">
+              LOGIN TO YOUR ACCOUNT
+            </h2>
+          </div>
+          
+          {/* Form with neon outlines */}
+          <div className="bg-[#2A1F45] rounded-lg shadow-lg shadow-[#FF00FF]/20 p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-[#FF99FF] mb-2">
                 Email address
               </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="block w-full rounded-md border-0 bg-[#2A1F45] py-3 px-4 text-white shadow-sm ring-1 ring-inset ring-[#FF00FF] placeholder:text-gray-400 focus:ring-2 focus:ring-[#FF00FF] focus:outline-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium text-gray-900"
-                >
-                  Password
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+              <label htmlFor="password" className="block text-sm font-medium text-[#FF99FF] mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="block w-full rounded-md border-0 bg-[#2A1F45] py-3 px-4 text-white shadow-sm ring-1 ring-inset ring-[#FF00FF] placeholder:text-gray-400 focus:ring-2 focus:ring-[#FF00FF] focus:outline-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
 
             <div>
               <button
                 type="submit"
-                disabled={!email || !password}
                 onClick={() => (window.location.href = "/home")}
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="w-full py-3 px-4 rounded-md font-semibold bg-[#FF00FF] hover:bg-[#FF33FF] text-white transition-all duration-300 shadow-[0_0_10px_rgba(255,0,255,0.7)]"
               >
-                Sign in
+                SIGN IN
               </button>
             </div>
           </form>
-
-          <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Not a player?{" "}
-            <a
-              href="#"
-              className="font-semibold text-indigo-600 hover:text-indigo-500"
-            >
-              Create an account here
-            </a>
-          </p>
+        </div>
+          
+          {/* Registration link with glowing effect */}
+          <div className="mt-8 text-center">
+            <p className="text-[#FF99FF]">
+              Not a player?{" "}
+              <a 
+                href="/register" 
+                className="font-semibold text-[#FF00FF] hover:text-[#FF33FF] transition-colors duration-300 underline"
+              >
+                Create an account here
+              </a>
+            </p>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
