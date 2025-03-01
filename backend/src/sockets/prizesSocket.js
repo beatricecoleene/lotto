@@ -13,8 +13,8 @@ export class PrizeSocket {
 
     // You can call this function after successful login
     pSocketEvents() {
-        // ✅ Apply authentication ONLY to prize-related events
-        this.io.use(authentication);
+       
+        // this.io.use(authentication);
 
         this.io.on("connection", (socket) => {
             console.log(`User connected to PrizeSocket: ${socket.user_id}`);

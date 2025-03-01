@@ -1,9 +1,11 @@
 import { randomInt } from "crypto"; 
+import Rounds from "../models/roundModel.js";
 
 export class RoundSocket {
     constructor(io) {
         this.io = io;
         this.rSocketEvents();
+        this.round = new Rounds();
         this.set_timer();
     }
 
@@ -19,25 +21,32 @@ export class RoundSocket {
     async set_timer() {
         let mins = 1;
         let secs = mins * 60 * 1000;
-        let timeRemaining = secs;
-        
-    
-        this.generateWinningNumber();
+        let round_num = 1;  
 
-        setInterval(() => {
-            timeRemaining -= 1000; 
+        this.io.sockets.emit('roundNumber', round_num); 
+        this.generateWinningNumber(); 
 
-           
-            this.io.emit('timer-update', timeRemaining);
+        while (true) {
+            let timeRemaining = secs;
 
-            this.io.sockets.emit('timer-update', timeRemaining);
-
-            
-            if (timeRemaining <= 0) {
-                timeRemaining = secs; 
-                this.generateWinningNumber(); 
+            while (timeRemaining > 0) {
+                this.io.emit('timer-update', timeRemaining);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                timeRemaining -= 1000;
             }
-        }, 1000); 
+
+            round_num++; 
+            this.io.sockets.emit('roundNumber', round_num); 
+
+            let winning_number = this.generateWinningNumber();
+            let date = new Date();
+
+            try {
+                await this.round.start_round(round_num, winning_number, date);
+            } catch (error) {
+                console.error("Round creation error:", error.message);
+            }
+        }
     }
 
     generateWinningNumber() {
@@ -46,11 +55,8 @@ export class RoundSocket {
             winning_number.push(randomInt(0, 10)); 
         }
         console.log(`Winning numbers for this round are: ${winning_number.join(', ')}`);
-        
-      
+    
         this.io.emit('winning-numbers', winning_number);
-
-       
-        this.io.sockets.emit('winning-numbers', winning_number);
+        return winning_number; // Return the generated numbers for use in set_timer()
     }
 }

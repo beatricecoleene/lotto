@@ -1,24 +1,24 @@
-import res from "express/lib/response.js";
+
 import  connection  from "../config/db.js";
 
 
-class Rounds{
+export class Rounds{
     constructor(){
         this.db = connection;
 
     }
-    async start_round(winning_number, drawtime){
+    async start_round(round_num,winning_number, drawtime){
         try{
             const result = await this.db.execute(
-                "INSERT INTO rounds(winning_numbers, drawtime) VALUES(?,?)",
-                [winning_number, drawtime]
+                "INSERT INTO rounds(round_id,winning_numbers, draw_time) VALUES(?,?,?)",
+                [round_num,winning_number, drawtime]
             );
 
             const round_id = result.inserId;
 
             const get_round= await this.db.execute(
                 "SELECT * FROM rounds WHERE round_id = ? ",
-                [round_id]
+                [round_num]
             );
             return get_round;
 
@@ -30,3 +30,5 @@ class Rounds{
     }
 }
 }
+
+export default Rounds;

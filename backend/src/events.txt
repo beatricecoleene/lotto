@@ -12,3 +12,8 @@ UserSocket EVENTS
 
 MIDDLEWARRE/authentication.js
 1. failedAuthentication- socket.emit
+
+
+ROUNDSOCKET
+
+1.roundNumber. this.io..socket.emit

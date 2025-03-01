@@ -25,7 +25,8 @@
 
     <h2>Winning Numbers</h2>
     <p id="winningNumbers">Waiting for winning numbers...</p>
-
+    <h2>Round Number</h2>
+    <p id="roundNumber">Round: 1</p>
     <h2>Timer</h2>
     <p id="timer">00:00</p>
 
@@ -80,8 +81,8 @@
                 socket.auth.token = data.token;
                 
                 console.log("🔄 Updating WebSocket authentication...");
-                socket.disconnect();
-                setTimeout(connectSocket, 500);
+               // socket.disconnect();
+                //setTimeout(connectSocket, 500);
             });
 
             socket.on("logInError", (data) => {
@@ -99,14 +100,15 @@
                 document.getElementById("status").innerText = "❌ Error: " + data.message;
             });
 
-            // Listen for timer updates from the backend
+            socket.on("roundNumber", (round) => {
+                document.getElementById("roundNumber").innerText = `Round: ${round}`;
+            });
             socket.on("timer-update", (timeRemaining) => {
                 const minutes = Math.floor(timeRemaining / 60000);
                 const seconds = Math.floor((timeRemaining % 60000) / 1000);
                 document.getElementById("timer").innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             });
 
-            // Listen for winning numbers from the backend
             socket.on("winning-numbers", (numbers) => {
                 document.getElementById("winningNumbers").innerText = `Winning Numbers: ${numbers.join(", ")}`;
             });
@@ -153,7 +155,9 @@
                 console.log("📩 Sending Claim Coins Request with token:", token);
                 socket.auth = { token };
                 console.log(`🛠️before socket.emit(claimCoins) `);
-                socket.emit("claimCoins");
+                socket.emit("claimCoins" );
+                //cket.emit("claimCoins", JSON.stringify({
+                    //th: { token })
                 console.log(`🛠️after socket.emit(claimCoins) `);
             }, 500); 
         }
