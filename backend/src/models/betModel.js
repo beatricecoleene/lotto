@@ -7,11 +7,22 @@ export class Bets{
 
     async bet_numbers(user_id, numbers,round_id ){
         try{
-            const result = await this.db.execute(
-                "INSERT INTO bets (user_id, numbers, round_id, status) VALUES(?,?,?,?)",
-                [user_id, numbers, round_id, "Pending"]
-            );
 
+            console.log("User ID:", user_id);
+            console.log("Round ID:", round_id);
+            console.log("Bet Numbers:", numbers);
+
+            if (!Array.isArray(numbers) || numbers.length === 0) {
+                throw new Error("Invalid bet numbers: Must be a non-empty array.");
+            }
+    
+            const numbersStr = JSON.stringify(numbers); // Convert array to string for SQL
+    
+            const [result] = await this.db.execute(
+                "INSERT INTO bets (user_id, numbers, round_id, status) VALUES (?, ?, ?, ?)",
+                [user_id, numbersStr, round_id, "Pending"]
+            );
+    
             const bet_id = result.insertId;
 
             const get_bet = await this.db.execute(

@@ -3,84 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claim Coins</title>
+    <title>Betting System</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        .bet-section {
+            margin: 20px 0;
+        }
+        .number-buttons button {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .selected-number {
+            font-weight: bold;
+            font-size: 20px;
+            color: blue;
+        }
+        .selected {
+            background-color: lightblue;
+        }
+    </style>
 </head>
 <body>
-    <h1>Claim Coins</h1>
+    <h1>Betting System</h1>
+
     <h2>Round Number</h2>
-    <p id="roundNumber">Round: 1</p>
+    <p id="roundNumber">Round: Loading...</p>
+
     <h2>Timer</h2>
     <p id="timer">00:00</p>
+
     <h2>Winning Numbers</h2>
     <p id="winningNumbers">Waiting for winning numbers...</p>
-    
-    <button onclick="claimCoins()">Claim Coins</button>
-    <p id="status"></p>
+
+    <div class="bet-section">
+        <h2>Pick Your Numbers</h2>
+
+        <p>Num 1: <span id="selectedNum1" class="selected-number">_</span></p>
+        <div id="num1-buttons" class="number-buttons"></div>
+
+        <p>Num 2: <span id="selectedNum2" class="selected-number">_</span></p>
+        <div id="num2-buttons" class="number-buttons"></div>
+
+        <p>Num 3: <span id="selectedNum3" class="selected-number">_</span></p>
+        <div id="num3-buttons" class="number-buttons"></div>
+
+        <button onclick="placeBet()">Place Bet</button>
+    </div>
+
+    <p id="betStatus"></p>
+
     <a href="index.html">Back to Main Page</a>
 
     <script>
         let socket;
+        const token = localStorage.getItem("token");
+        const user_id = localStorage.getItem("user_id");
+        let selectedNumbers = { num_one: null, num_two: null, num_three: null };
+        let currentRoundId = null;
 
-        function claimCoins() {
-            const token = localStorage.getItem("token");
+        if (token) {
+            console.log("🔌 Connecting to socket...");
+            socket = io("http://localhost:3000", { auth: { token, user_id } });
 
-            if (!token) {
-                document.getElementById("status").innerText = "❌ You need to log in first!";
+            socket.on("connect", () => {
+                console.log("✅ Connected:", socket.id);
+                socket.emit("request-authentication", token);
+            });
+
+            socket.on("authentication-success", () => {
+                console.log("✅ Authentication successful! Listening for updates...");
+            });
+
+            socket.on("failedAuthentication", (data) => {
+                document.getElementById("betStatus").innerText = "❌ Authentication Failed: " + data.message;
+                socket.disconnect();
+            });
+
+            socket.on("roundNumber", (round) => {
+                currentRoundId = round;
+                document.getElementById("roundNumber").innerText = `Round: ${round}`;
+            });
+
+            socket.on("timer-update", (timeRemaining) => {
+                const minutes = Math.floor(timeRemaining / 60000);
+                const seconds = Math.floor((timeRemaining % 60000) / 1000);
+                document.getElementById("timer").innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            });
+
+            socket.on("winning-numbers", (numbers) => {
+                document.getElementById("winningNumbers").innerText = `Winning Numbers: ${numbers.join(", ")}`;
+            });
+
+            socket.on("bettingSuccessful", (data) => {
+                document.getElementById("betStatus").innerText = `✅ ${data.message}`;
+            });
+
+            socket.on("bettingError", (data) => {
+                document.getElementById("betStatus").innerText = `❌ ${data.message}`;
+            });
+        } else {
+            document.getElementById("betStatus").innerText = "❌ You need to log in first!";
+            console.error("❌ No token found. User must log in.");
+        }
+
+        function placeBet() {
+            if (selectedNumbers.num_one === null || selectedNumbers.num_two === null || selectedNumbers.num_three === null) {
+                document.getElementById("betStatus").innerText = "❌ Please select all three numbers!";
+                return;
+            }
+            if (!currentRoundId) {
+                document.getElementById("betStatus").innerText = "❌ Unable to get the current round!";
                 return;
             }
 
-            if (!socket) {
-                console.log("🔌 Connecting to socket...");
-                socket = io("http://localhost:3000", { auth: { token }, user_id: localStorage.getItem("user_id")  });
-                
-                socket.on("connect", () => {
-                    console.log("✅ Connected:", socket.id);
-                    console.log("📩 Requesting authentication...");
-                    socket.emit("request-authentication", token);
-                });
+            console.log("📩 Sending bet:", selectedNumbers);
+            socket.emit("getNumbers", { ...selectedNumbers, round_id : currentRoundId });
+        }
 
-                socket.on("authentication-success", () => {
-                    console.log("✅ Authentication successful! Claiming coins...");
-                    socket.emit("claimCoins");
-                });
-
-                socket.on("failedAuthentication", (data) => {
-                    document.getElementById("status").innerText = "❌ Authentication Failed: " + data.message;
-                    localStorage.removeItem("token");
-                    socket.disconnect();
-                    socket = null;
-                });
-
-                socket.on("coinsClaimed", (data) => {
-                    document.getElementById("status").innerText = `✅ ${data.message} You now have ${data.coins} coins.`;
-                });
-
-                socket.on("claimingError", (data) => {
-                    document.getElementById("status").innerText = "❌ Error: " + data.message;
-                });
-
-                // Listen for round number updates
-                socket.on("roundNumber", (round) => {
-                    document.getElementById("roundNumber").innerText = `Round: ${round}`;
-                });
-
-                // Listen for timer updates
-                socket.on("timer-update", (timeRemaining) => {
-                    const minutes = Math.floor(timeRemaining / 60000);
-                    const seconds = Math.floor((timeRemaining % 60000) / 1000);
-                    document.getElementById("timer").innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                });
-
-                // Listen for winning numbers
-                socket.on("winning-numbers", (numbers) => {
-                    document.getElementById("winningNumbers").innerText = `Winning Numbers: ${numbers.join(", ")}`;
-                });
-            } else {
-                console.log("📩 Already connected, requesting authentication...");
-                socket.emit("request-authentication", token);
+        function createNumberButtons(targetId, numKey) {
+            const container = document.getElementById(targetId);
+            container.innerHTML = ""; // Clear existing buttons
+            for (let i = 0; i <= 9; i++) {
+                const button = document.createElement("button");
+                button.innerText = i;
+                button.onclick = () => selectNumber(numKey, i, button);
+                container.appendChild(button);
             }
         }
+
+        function selectNumber(numKey, number, button) {
+            selectedNumbers[numKey] = number;
+
+            const formattedKey = numKey === "num_one" ? "selectedNum1" :
+                                numKey === "num_two" ? "selectedNum2" :
+                                "selectedNum3";
+            document.getElementById(formattedKey).innerText = number;
+
+            // Highlight the selected button
+            const container = button.parentElement;
+            Array.from(container.children).forEach(btn => btn.classList.remove("selected"));
+            button.classList.add("selected");
+        }
+
+        createNumberButtons("num1-buttons", "num_one");
+        createNumberButtons("num2-buttons", "num_two");
+        createNumberButtons("num3-buttons", "num_three");
     </script>
 </body>
 </html>

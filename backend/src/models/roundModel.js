@@ -7,24 +7,47 @@ export class Rounds{
         this.db = connection;
 
     }
-    async start_round(round_num, winning_number, drawtime){
+
+    async start_Round(round_num){
+
         try{
+
+            const round = await this.db.execute(
+                "INSERT INTO rounds(round_id) VALUES(?)",
+                [round_num]
+            );
+            const round_id = round.insertId;
+
+            return round_id;
+
+
+
+        }catch(err){
+            console.error('<error> Rounds.start_round', err);
+            throw err;
+    
+    }
+
+    }
+    async update_WinningNum( round_num,winning_number, drawtime){
+        try{
+
             const result = await this.db.execute(
-                "INSERT INTO rounds(round_id,winning_numbers, draw_time) VALUES(?,?,?)",
-                [round_num,winning_number, drawtime]
+                "UPDATE rounds SET winning_numbers=?, draw_time= ? WHERE round_id =?",
+                [winning_number, drawtime, round_num]
             );
 
-            const round_id = result.inserId;
+            const round_id = round_num;
 
             const get_round= await this.db.execute(
                 "SELECT * FROM rounds WHERE round_id = ? ",
-                [round_num]
+                [round_id]
             );
             return get_round;
 
 
         }catch(err){
-            console.error('<error> Rounds.start_round', err);
+            console.error('<error> Rounds.update_WinningNum', err);
             throw err;
     
     }
@@ -35,7 +58,15 @@ export class Rounds{
             const [get_round] = await this.db.execute(
                 "SELECT * FROM rounds ORDER BY round_id DESC LIMIT 1"
             );
-            return get_round;
+            if (!get_round.length) {
+                return 0;
+            }
+
+            const roundId = get_round[0].round_id;
+            console.log(roundId);
+
+            return roundId;
+            
         }catch(err){
             console.error('<error> Rounds.get_roundNum', err);
             throw err;

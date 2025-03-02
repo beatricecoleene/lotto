@@ -7,6 +7,7 @@ import UserSocket from "./backend/src/sockets/userSocket.js";
 import PrizeSocket from "./backend/src/sockets/prizesSocket.js";
 import authenticateSocket from "./backend/src/middleware/authentication.js";
 import RoundSocket from "./backend/src/sockets/roundSocket.js";
+import BetSocket from "./backend/src/sockets/betsSocket.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -41,6 +42,8 @@ io.on("connection", (socket) => {
           console.log(`Authenticated user: ${socket.user_id}`);
           new PrizeSocket(io, socket);
           new RoundSocket(io);
+          new BetSocket(io, socket);
+          
           socket.emit("authentication-success"); 
       });
   });
