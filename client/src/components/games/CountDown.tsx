@@ -1,79 +1,82 @@
-// import React, { useState, useEffect } from 'react';
-// import { io } from 'socket.io-client';
+import React, { useState, useEffect } from 'react';
 
 const CountdownTimer = () => {
+  // const [time, setTime] = useState({ hours: 0, minutes: 42, seconds: 27 });
 
-// const CountdownTimer = ({ initialTime = { hours: 0, minutes: 0, seconds: 0 }, socketUrl = '', socketEvent = 'timer' }) => {
-//   const [time, setTime] = useState(initialTime);
-//   const [socket, setSocket] = useState(null);
-//   const [isConnected, setIsConnected] = useState(false);
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setTime(prevTime => {
+  //       const newSeconds = prevTime.seconds > 0 ? prevTime.seconds - 1 : 59;
+  //       const newMinutes = newSeconds === 59 
+  //         ? (prevTime.minutes > 0 ? prevTime.minutes - 1 : 59) 
+  //         : prevTime.minutes;
+  //       const newHours = newMinutes === 59 && newSeconds === 59
+  //         ? (prevTime.hours > 0 ? prevTime.hours - 1 : 23)
+  //         : prevTime.hours;
+        
+  //       return { hours: newHours, minutes: newMinutes, seconds: newSeconds };
+  //     });
+  //   }, 1000);
 
-//   // Initialize socket connection
-//   useEffect(() => {
-//     if (!socketUrl) return;
+  //   return () => clearInterval(timer);
+  // }, []);
 
-//     // const newSocket = io(socketUrl);
-    
-//     newSocket.on('connect', () => {
-//       setIsConnected(true);
-//       console.log('Connected to socket server');
-//     });
-    
-//     newSocket.on('disconnect', () => {
-//       setIsConnected(false);
-//       console.log('Disconnected from socket server');
-//     });
-    
-//     newSocket.on(socketEvent, (timerData) => {
-//       setTime(timerData);
-//     });
-    
-//     setSocket(newSocket);
-    
-//     return () => {
-//       newSocket.disconnect();
-//     };
-//   }, [socketUrl, socketEvent]);
-
-//   // Format numbers to always have two digits
-//   const formatNumber = (num) => {
-//     return num.toString().padStart(2, '0');
-//   };
+  // const formatNumber = (num: number) => num.toString().padStart(2, '0');
 
   return (
-    <div className="flex items-center justify-center gap-2 text-white mt-10">
-      {/* Hours */}
-      <div className="flex flex-col items-center bg-fuchsia-500 px-6 py-2 rounded-3xl">
-        {/* <span className="text-4xl font-bold">{formatNumber(time.hours)}</span> */}
-        <span className="text-4xl font-bold">00</span>
+    <div className="flex flex-col items-center justify-center mt-10 p-4 bg-black rounded-lg border-2 border-yellow-500 shadow-lg">
+      <div className="text-yellow-500 font-bold text-xl mb-2 uppercase tracking-wider">
+        Time Remaining
+      </div>
+      
+      <div className="flex items-center justify-center gap-4">
+        {/* Hours */}
+        <div className="flex flex-col items-center">
+          <div className="bg-black border-2 border-yellow-500 rounded-lg p-2 w-24 flex items-center justify-center shadow-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent"></div>
+            <span className="text-red-600 text-5xl font-bold font-mono relative z-10 glow-text">
+              {/* {formatNumber(time.hours)} */}
+              00
+            </span>
+          </div>
+          <span className="text-yellow-500 text-sm mt-1 uppercase">Hours</span>
+        </div>
 
-        <span className="text-sm">hours</span>
-      </div>
-      
-      {/* Separator */}
-      <div className="flex flex-col items-center justify-center">
-        <div className="w-2 h-2 rounded-full bg-white mb-1"></div>
-        <div className="w-2 h-2 rounded-full bg-white mt-1"></div>
-      </div>
-      
-      {/* Minutes */}
-      <div className="flex flex-col items-center bg-fuchsia-500 px-6 py-2 rounded-3xl">
-        {/* <span className="text-4xl font-bold">{formatNumber(time.minutes)}</span> */}
-        <span className="text-4xl font-bold">42</span>
-        <span className="text-sm">minutes</span>
-      </div>
-      
-      {/* Separator */}
-      <div className="flex flex-col items-center justify-center">
-        <div className="w-2 h-2 rounded-full bg-white mb-1"></div>
-        <div className="w-2 h-2 rounded-full bg-white mt-1"></div>
-      </div>
-      
-      {/* Seconds */}
-      <div className="flex flex-col items-center bg-fuchsia-500 px-6 py-2 rounded-3xl">
-        {/* <span className="text-4xl font-bold">{formatNumber(time.seconds)}</span> */}
-        <span className="text-4xl font-bold">27</span>
-        <span className="text-sm">seconds</span>
+        {/* Divider */}
+        <div className="flex flex-col justify-center items-center mt-1">
+          <div className="w-3 h-3 rounded-full bg-yellow-500 mb-1"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500 mt-1"></div>
+        </div>
+
+        {/* Minutes */}
+        <div className="flex flex-col items-center">
+          <div className="bg-black border-2 border-yellow-500 rounded-lg p-2 w-24 flex items-center justify-center shadow-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent"></div>
+            <span className="text-red-600 text-5xl font-bold font-mono relative z-10 glow-text">
+              {/* {formatNumber(time.minutes)} */}
+              12
+            </span>
+          </div>
+          <span className="text-yellow-500 text-sm mt-1 uppercase">Minutes</span>
+        </div>
+
+        {/* Divider */}
+        <div className="flex flex-col justify-center items-center mt-1">
+          <div className="w-3 h-3 rounded-full bg-yellow-500 mb-1"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500 mt-1"></div>
+        </div>
+
+        {/* Seconds */}
+        <div className="flex flex-col items-center">
+          <div className="bg-black border-2 border-yellow-500 rounded-lg p-2 w-24 flex items-center justify-center shadow-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent"></div>
+            <span className="text-red-600 text-5xl font-bold font-mono relative z-10 glow-text">
+              {/* {formatNumber(time.seconds)} */}
+              34
+            </span>
+          </div>
+          <span className="text-yellow-500 text-sm mt-1 uppercase">Seconds</span>
+        </div>
       </div>
     </div>
   );
