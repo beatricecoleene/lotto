@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface SubmitNumbersProps {
   selectedNumbers: (number | undefined)[];
   onSubmit: () => void;
@@ -18,39 +16,48 @@ const SubmitNumbers = ({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-20" />
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-20" />
       
-      {/* Bottom sheet */}
-      <div className="fixed bottom-0 left-0 right-0 bg-purple-600 rounded-t-3xl p-4 z-50 shadow-lg mx-[15%]">
-        <div className="flex items-center justify-between">
-          <div className="bg-green-500 p-3 rounded-lg text-white font-bold 
-             hover:bg-green-600 cursor-pointer 
-             transition-all duration-300 ease-in-out" onClick={onCancel}>
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6 text-green-900" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
-              />
-            </svg>
-          </div>
-          
-          <div className="bg-green-500 flex-1 mx-4 p-4 rounded-lg flex flex-col items-center justify-center 
-             hover:bg-green-600 cursor-pointer transition-all duration-300 ease-in-out" onClick={onSubmit}>
-            <div className="text-green-900 font-medium">Total amount</div>
-            <div className="text-green-900 text-xl font-bold">
-              {amount.toFixed(2)} {currency}
+      <div className="fixed bottom-0 left-0 right-0 bg-black border-2 border-yellow-500 rounded-t-3xl p-6 z-50 shadow-lg mx-[10%]">
+        <div className="flex flex-col">
+          <div className="text-center mb-4">
+            <h3 className="text-yellow-500 text-xl font-bold">CONFIRM YOUR BET</h3>
+            <div className="flex justify-center gap-4 my-3">
+              {selectedNumbers.map((num, index) => (
+                <div key={index} className="w-12 h-12 bg-black rounded-full flex items-center justify-center border-2 border-yellow-500 shadow-md">
+                  <span className="text-red-600 text-xl font-bold">{num}</span>
+                </div>
+              ))}
             </div>
           </div>
+          
+          <div className="bg-black/30 border border-yellow-500/30 rounded-lg p-4 mb-6">
+            <div className="flex justify-between items-center">
+              <span className="text-yellow-400">Bet Amount:</span>
+              <span className="text-white font-bold">{currency} {amount.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-yellow-400">Potential Win:</span>
+              <span className="text-green-400 font-bold">{currency} {(amount * 12.5).toFixed(2)}</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-between gap-4">
+            <button 
+              onClick={onCancel}
+              className="bg-black/80 border-2 border-red-600 rounded-lg py-3 px-6 text-red-600 font-bold hover:bg-red-600/20 transition-all"
+            >
+              CANCEL
+            </button>
+            
+            <button 
+              onClick={onSubmit}
+              className="flex-1 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-lg py-3 px-6 text-black font-bold shadow-lg hover:from-yellow-500 hover:to-yellow-400 transition-all"
+            >
+              PLACE BET
+            </button>
+          </div>
         </div>
-        
       </div>
     </>
   );
