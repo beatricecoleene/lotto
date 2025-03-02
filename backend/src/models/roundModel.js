@@ -7,7 +7,7 @@ export class Rounds{
         this.db = connection;
 
     }
-    async start_round(round_num,winning_number, drawtime){
+    async start_round(round_num, winning_number, drawtime){
         try{
             const result = await this.db.execute(
                 "INSERT INTO rounds(round_id,winning_numbers, draw_time) VALUES(?,?,?)",
@@ -29,6 +29,19 @@ export class Rounds{
     
     }
 }
+
+    async get_roundNum(){
+        try{
+            const [get_round] = await this.db.execute(
+                "SELECT * FROM rounds ORDER BY round_id DESC LIMIT 1"
+            );
+            return get_round;
+        }catch(err){
+            console.error('<error> Rounds.get_roundNum', err);
+            throw err;
+    
+    }
+    }
 }
 
 export default Rounds;

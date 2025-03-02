@@ -21,13 +21,18 @@ export class RoundSocket {
     async set_timer() {
         let mins = 1;
         let secs = mins * 60 * 1000;
-        let round_num = 1;  
-
-        this.io.sockets.emit('roundNumber', round_num); 
-        this.generateWinningNumber(); 
+        let latestRound = await this.round.get_roundNum(); 
+        let round_num = latestRound > 0 ? latestRound[0].get_round + 1:1;
+        
+        // let round_num = 1;  
+     
+       
 
         while (true) {
             let timeRemaining = secs;
+
+            this.io.sockets.emit('roundNumber', round_num); 
+            
 
             while (timeRemaining > 0) {
                 this.io.emit('timer-update', timeRemaining);
@@ -35,17 +40,20 @@ export class RoundSocket {
                 timeRemaining -= 1000;
             }
 
-            round_num++; 
+           
             this.io.sockets.emit('roundNumber', round_num); 
+            console.log("save round");
 
             let winning_number = this.generateWinningNumber();
             let date = new Date();
 
             try {
-                await this.round.start_round(round_num, winning_number, date);
+                await this.round.start_round(round_num,winning_number, date);
             } catch (error) {
                 console.error("Round creation error:", error.message);
             }
+
+            round_num++;
         }
     }
 
@@ -57,6 +65,8 @@ export class RoundSocket {
         console.log(`Winning numbers for this round are: ${winning_number.join(', ')}`);
     
         this.io.emit('winning-numbers', winning_number);
-        return winning_number; // Return the generated numbers for use in set_timer()
+        return winning_number; 
     }
 }
+
+export default RoundSocket;

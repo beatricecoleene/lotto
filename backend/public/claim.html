@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Coins</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Claim Coins</h1>
+    <h2>Round Number</h2>
+    <p id="roundNumber">Round: 1</p>
+    <h2>Timer</h2>
+    <p id="timer">00:00</p>
+    <h2>Winning Numbers</h2>
+    <p id="winningNumbers">Waiting for winning numbers...</p>
+    
+    <button onclick="claimCoins()">Claim Coins</button>
+    <p id="status"></p>
+    <a href="index.html">Back to Main Page</a>
+
+    <script>
+        let socket;
+
+        function claimCoins() {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                document.getElementById("status").innerText = "❌ You need to log in first!";
+                return;
+            }
+
+            if (!socket) {
+                console.log("🔌 Connecting to socket...");
+                socket = io("http://localhost:3000", { auth: { token }, user_id: localStorage.getItem("user_id")  });
+                
+                socket.on("connect", () => {
+                    console.log("✅ Connected:", socket.id);
+                    console.log("📩 Requesting authentication...");
+                    socket.emit("request-authentication", token);
+                });
+
+                socket.on("authentication-success", () => {
+                    console.log("✅ Authentication successful! Claiming coins...");
+                    socket.emit("claimCoins");
+                });
+
+                socket.on("failedAuthentication", (data) => {
+                    document.getElementById("status").innerText = "❌ Authentication Failed: " + data.message;
+                    localStorage.removeItem("token");
+                    socket.disconnect();
+                    socket = null;
+                });
+
+                socket.on("coinsClaimed", (data) => {
+                    document.getElementById("status").innerText = `✅ ${data.message} You now have ${data.coins} coins.`;
+                });
+
+                socket.on("claimingError", (data) => {
+                    document.getElementById("status").innerText = "❌ Error: " + data.message;
+                });
+
+                // Listen for round number updates
+                socket.on("roundNumber", (round) => {
+                    document.getElementById("roundNumber").innerText = `Round: ${round}`;
+                });
+
+                // Listen for timer updates
+                socket.on("timer-update", (timeRemaining) => {
+                    const minutes = Math.floor(timeRemaining / 60000);
+                    const seconds = Math.floor((timeRemaining % 60000) / 1000);
+                    document.getElementById("timer").innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                });
+
+                // Listen for winning numbers
+                socket.on("winning-numbers", (numbers) => {
+                    document.getElementById("winningNumbers").innerText = `Winning Numbers: ${numbers.join(", ")}`;
+                });
+            } else {
+                console.log("📩 Already connected, requesting authentication...");
+                socket.emit("request-authentication", token);
+            }
+        }
+    </script>
+</body>
+</html>
