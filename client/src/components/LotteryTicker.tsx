@@ -4,8 +4,7 @@ import "../css/LotteryTicker.css";
 const lotteryInfo = [
   "🎉 Free Coins for New Users! ",
   "🔥 Sign Up Today for Exclusive Bonuses! ",
-  "🎡 New User? Get a Free Spin Now! ",
-  "💰 Win Big with Daily Draws! ",
+  "🎡 New User? Sign up now and big win ",
   "🏆 Play Now & Climb the Leaderboards! ",
   "🎯 Exclusive Offers Available! ",
   "🚀 Fast Payouts & Secure Transactions! ",
