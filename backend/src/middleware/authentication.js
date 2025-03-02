@@ -1,25 +1,23 @@
 import jwt from "jsonwebtoken";
 
-const authentication = (socket, next) => {
+const authenticateSocket = (socket, next) => {
+    console.log("Handshake Data:", socket.handshake);
     const token = socket.handshake.auth?.token;
+    // const token = socket.handshake.query?.token;
+    console.log("TOKEN", token);
 
     if (!token) {
-        socket.emit("failedAuthentication", { message: "User not Authenticated" });
-        return next(new Error("Authentication error"));
+        return next(new Error("Authentication failed: No token provided"));
     }
 
     jwt.verify(token, process.env.API_SECRET_KEY, (err, decoded) => {
         if (err) {
-            socket.emit("failedAuthentication", { message: "Invalid token" });
-            return next(new Error("Invalid Token"));
+            return next(new Error("Authentication failed: Invalid token"));
         }
 
-        // Attach decoded user data to socket
-        socket.user_id = decoded.user_id;
-        socket.email = decoded.email;
-        
-        next();
+        socket.user_id = decoded.user_id; // Attach user ID to socket
+        next(); // Continue connection
     });
 };
 
-export default authentication;
+export default authenticateSocket;

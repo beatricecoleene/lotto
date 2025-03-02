@@ -20,101 +20,41 @@
     <input type="password" id="loginPassword" placeholder="Enter password">
     <button onclick="logInUser()">Log In</button>
 
-    <h2>Claim Coins</h2>
-    <button onclick="claimCoins()">Claim Coins</button>
-
-    <h2>Winning Numbers</h2>
-    <p id="winningNumbers">Waiting for winning numbers...</p>
-    <h2>Round Number</h2>
-    <p id="roundNumber">Round: 1</p>
-    <h2>Timer</h2>
-    <p id="timer">00:00</p>
-
     <p id="status"></p>
 
+    <!-- Button to navigate to claim.html -->
+    <button onclick="goToClaimPage()">Go to Claim Page</button>
+
     <script>
-        let socket;
+        const socket = io("http://localhost:3000");
 
-        function connectSocket() {
-            const token = localStorage.getItem("token");
+        socket.on("connect", () => {
+            console.log("✅ Connected to WebSocket:", socket.id);
+        });
 
-            if (socket) {
-                console.log("⚠️ WebSocket already connected.");
-                return;
-            }
+        socket.on("disconnect", (reason) => {
+            console.warn("⚠️ Disconnected from WebSocket:", reason);
+        });
 
-            console.log("🔌 Connecting to WebSocket with token:", token);
+        socket.on("accountCreated", (data) => {
+            console.log("✅ Account Created:", data);
+            document.getElementById("status").innerText = `✅ ${data.message} (User: ${data.user_name})`;
+        });
 
-            socket = io("http://localhost:3000", {
-                auth: { token }
-            });
+        socket.on("creationError", (data) => {
+            console.error("❌ Account Creation Error:", data.message);
+            document.getElementById("status").innerText = "❌ Error: " + data.message;
+        });
 
-            socket.on("connect", () => {
-                console.log("✅ Connected to WebSocket:", socket.id);
-            });
+        socket.on("LoggedIn", (data) => {
+            console.log("✅ Login Success:", data);
+            document.getElementById("status").innerText = `✅ ${data.message}`;
+        });
 
-            socket.on("disconnect", (reason) => {
-                console.warn("⚠️ Disconnected from WebSocket:", reason);
-            });
-
-            socket.on("failedAuthentication", (data) => {
-                console.error("❌ Authentication Failed:", data.message);
-                document.getElementById("status").innerText = "❌ Authentication Failed: " + data.message;
-                localStorage.removeItem("token");
-            });
-
-            socket.on("accountCreated", (data) => {
-                console.log("✅ Account Created:", data);
-                document.getElementById("status").innerText = `✅ ${data.message} (User: ${data.user_name})`;
-            });
-
-            socket.on("creationError", (data) => {
-                console.error("❌ Account Creation Error:", data.message);
-                document.getElementById("status").innerText = "❌ Error: " + data.message;
-            });
-
-            socket.on("LoggedIn", (data) => {
-                console.log("✅ Login Success:", data);
-                document.getElementById("status").innerText = `✅ ${data.message}`;
-                
-                localStorage.setItem("token", data.token);
-                socket.auth.token = data.token;
-                
-                console.log("🔄 Updating WebSocket authentication...");
-               // socket.disconnect();
-                //setTimeout(connectSocket, 500);
-            });
-
-            socket.on("logInError", (data) => {
-                console.error("❌ Login Error:", data.message);
-                document.getElementById("status").innerText = "❌ Error: " + data.message;
-            });
-
-            socket.on("coinsClaimed", (data) => {
-                console.log("🎉 Coins Claimed:", data);
-                document.getElementById("status").innerText = `✅ ${data.message} You now have ${data.coins} coins.`;
-            });
-
-            socket.on("claimingError", (data) => {
-                console.error("❌ Coin Claim Error:", data.message);
-                document.getElementById("status").innerText = "❌ Error: " + data.message;
-            });
-
-            socket.on("roundNumber", (round) => {
-                document.getElementById("roundNumber").innerText = `Round: ${round}`;
-            });
-            socket.on("timer-update", (timeRemaining) => {
-                const minutes = Math.floor(timeRemaining / 60000);
-                const seconds = Math.floor((timeRemaining % 60000) / 1000);
-                document.getElementById("timer").innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            });
-
-            socket.on("winning-numbers", (numbers) => {
-                document.getElementById("winningNumbers").innerText = `Winning Numbers: ${numbers.join(", ")}`;
-            });
-        }
-
-        connectSocket();
+        socket.on("logInError", (data) => {
+            console.error("❌ Login Error:", data.message);
+            document.getElementById("status").innerText = "❌ Error: " + data.message;
+        });
 
         function registerUser() {
             const username = document.getElementById("username").value;
@@ -144,22 +84,8 @@
             socket.emit("userLogIn", { email, password });
         }
 
-        function claimCoins() {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                document.getElementById("status").innerText = "❌ You need to log in first!";
-                return;
-            }
-
-            setTimeout(() => {
-                console.log("📩 Sending Claim Coins Request with token:", token);
-                socket.auth = { token };
-                console.log(`🛠️before socket.emit(claimCoins) `);
-                socket.emit("claimCoins" );
-                //cket.emit("claimCoins", JSON.stringify({
-                    //th: { token })
-                console.log(`🛠️after socket.emit(claimCoins) `);
-            }, 500); 
+        function goToClaimPage() {
+            window.location.href = "claim.html";
         }
     </script>
 </body>
